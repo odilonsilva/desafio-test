@@ -2,7 +2,7 @@
   <div class="home">
     <h1>{{ appName }}</h1>
 
-    <table>
+    <table class="ui table">
       <thead>
         <th>id</th>
         <th>Nome</th>
@@ -18,10 +18,12 @@
 <script>
 // @ is an alias to /src
 import ItemTable from "../components/ItemTable.vue";
+import Navbar from '../components/NavBar.vue'
 export default {
   name: "Home",
   components: {
-    ItemTable
+    ItemTable,
+    Navbar
   },
   data() {
     return {
@@ -30,8 +32,7 @@ export default {
         { id: 1, name: "Odilon", email: "odilon.silva1@outlook.com.br" },
         { id: 2, name: "Antonio", email: "aalgusto@gmail.com" }
       ],
-      seen: false,
-      message: "Hello Vue"
+      message: "Hello Vue",
     };
   },
   methods: {

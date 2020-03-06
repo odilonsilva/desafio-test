@@ -1,3 +1,6 @@
+# SetEnvIf Origin "^(.*localhost:8000)$" ORIGIN_SUB_DOMAIN=$1
+# Header set Access-Control-Allow-Origin "%{ORIGIN_SUB_DOMAIN}e" env=ORIGIN_SUB_DOMAIN
+# Header set Access-Control-Allow-Origin "*"
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

@@ -1,13 +1,32 @@
 <template>
-    <router-view />
+  <div>
+    <Navbar v-if="hasUser" />
+    <div class="ui container">
+      <router-view />
+    </div>
+  </div>
 </template>
 <script>
+import Navbar from "./components/NavBar.vue";
 export default {
-    name:'Index',
-    data(){
-        return {}
+  name: "Index",
+  data() {
+    return {
+      hasUser: this.isLoged()
+    };
+  },
+  components: {
+    Navbar
+  },
+  methods:{
+    isLoged: function(){
+      var token = localStorage.getItem('token')
+      if(token) return true
+
+      return false
     }
-}
+  }
+};
 </script>
 
 <style>

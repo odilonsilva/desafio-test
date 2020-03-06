@@ -18,6 +18,7 @@ Route::prefix('auth')->group(function(){
     Route::post('register','AuthController@register');
     Route::post('login','AuthController@login');
     Route::get('refresh','AuthController@refresh');
+    Route::get('list','AuthController@list');
     
     Route::middleware('auth:api')->group(function () {
         Route::get('user','AuthController@user');

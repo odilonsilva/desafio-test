@@ -37,12 +37,22 @@ class AuthController extends Controller
         }
     }
 
+    public function list(){
+        try{
+            $users = User::all();
+            return response()->json(['status'=>'success','data'=>$users]);
+        }
+        catch(\Exception $error){
+            throw new \Exception("Error Processing Request", $error);
+        }
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->only('email','password');
 
         if($token = $this->guard()->attempt($credentials))
-            return \response()->json(['status'=>'success'],200)->header('Authorization',$token);
+            return \response()->json(['status'=>'success','token'=>$token],200)->header('Authorization',$token);
             
         return \response()->json(['error'=>'login_error'],401);
     }
