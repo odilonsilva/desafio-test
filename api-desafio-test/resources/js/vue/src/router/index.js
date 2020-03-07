@@ -2,7 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
-import CreateForm from '../views/Create.vue'
+import Create from '../views/Create.vue'
+import Update from '../views/Update.vue'
+
 Vue.use(VueRouter)
 
 const routes = [{
@@ -25,7 +27,15 @@ const routes = [{
     {
         path: '/create',
         name: 'create',
-        component: CreateForm,
+        component: Create,
+        meta: {
+            auth: true
+        }
+    },
+    {
+        path: '/edit/:id',
+        name: 'edit',
+        component: Update,
         meta: {
             auth: true
         }

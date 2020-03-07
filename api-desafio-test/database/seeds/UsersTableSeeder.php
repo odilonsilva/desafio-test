@@ -17,13 +17,22 @@ class UsersTableSeeder extends Seeder
             'name' => 'Odilon Silva',
             'email' => 'odilon.silva1@outlook.com.br',
             'password' => Hash::make('mkAgile'),
-            'role' => 1
+            'role' => 1,
+            'deletado' => false
         ]);
         DB::table('users')->insert([
             'name' => 'Admin',
             'email' => 'admin@test.com',
             'password' => Hash::make('admin'),
-            'role' => 2
+            'role' => 2,
+            'deletado' => false
+        ]);
+        DB::table('users')->insert([
+            'name' => 'vendor',
+            'email' => 'vendor@test.com',
+            'password' => Hash::make('admin'),
+            'role' => 2,
+            'deletado' => true
         ]);
     }
 }

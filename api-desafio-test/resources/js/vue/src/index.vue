@@ -1,7 +1,7 @@
 <template>
   <div>
     <Navbar v-if="hasUser" />
-    <div class="ui container">
+    <div class="ui centered container">
       <router-view />
     </div>
   </div>
@@ -57,12 +57,5 @@ input {
   line-height: 30px;
   font-size: 20px;
 }
-button {
-  width: 110px;
-  height: 50px;
-  font-size: 20px;
-  background: #4d4dde;
-  color: #fff;
-  border: 1px solid;
-}
+
 </style>

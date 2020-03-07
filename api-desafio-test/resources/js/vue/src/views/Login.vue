@@ -1,10 +1,10 @@
 <template>
-  <div class="ui middle aligned center aligned grid">
+  <div class="ui small aligned center aligned grid">
     <div class="column">
-      <h2 class="ui teal image header">
+      <h2 class="ui header">
         <div class="content">Login</div>
       </h2>
-      <form class="ui large form">
+      <form class="ui form">
         <div class="ui stacked segment">
           <div class="field">
             <div class="ui left icon input">
@@ -18,10 +18,10 @@
               <input type="password" v-model="password" name="password" placeholder="Password" />
             </div>
           </div>
-          <div class="ui fluid large teal submit button" @click="login">Login</div>
+          <div class="ui fluid large blue submit button" @click="login">Login</div>
         </div>
 
-        <div class="ui error message" v-if="hasError">Falha ao logar</div>
+        <div class="ui negative message" v-if="hasError">Falha ao logar</div>
       </form>
     </div>
   </div>
