@@ -32,15 +32,19 @@ export default {
     apagar(item) {
       var app = this;
       if (window.confirm(`Deseja apagar ${item.name}?`)) {
+        app.$parent.isLoading = true;
         fetch(appBaseUrl + "/auth/delete/" + item.id)
           .then(response => response.json())
           .then(res => {
+            app.$parent.isLoading = false;
             if (res.status === "success") {
+              app.$parent.removeUser(item.id);
               document.querySelector(`#row${item.id}`).style.cssText =
                 "display:none";
             }
           })
           .catch(err => {
+            app.$parent.isLoading = false;
             console.error("falha ao apagar item:" + err);
           });
       }

@@ -1,6 +1,6 @@
 <template>
-  <div class="ui small aligned center aligned grid">
-    <div class="column">
+  <div class="ui aligned center aligned grid" style="margin-top:100px">
+    <div class="ten wide column">
       <h2 class="ui header">
         <div class="content">Login</div>
       </h2>
@@ -22,6 +22,10 @@
         </div>
 
         <div class="ui negative message" v-if="hasError">Falha ao logar</div>
+        <div class="ui center aligned segment" v-if="isLoading">
+          <img src="/loading.gif" width="50" />
+          <p>Carregando...</p>
+        </div>
       </form>
     </div>
   </div>
@@ -31,6 +35,7 @@ export default {
   name: "login",
   data() {
     return {
+      isLoading: false,
       email: null,
       password: null,
       hasError: false
@@ -40,6 +45,7 @@ export default {
     login: function() {
       var app = this;
       app.hasError = false;
+      app.isLoading = true;
       fetch(appBaseUrl + "/auth/login", {
         method: "POST",
         headers: {
@@ -52,17 +58,22 @@ export default {
       })
         .then(response => response.json())
         .then(res => {
+          app.isLoading = false;
           if (res.status === "success") {
             window.localStorage.setItem("token", res.token);
-            app.$router.push({name:"home"});
+            app.$router.push({ name: "home" });
           } else {
             app.hasError = true;
           }
         })
-        .catch(error =>
-          console.error("não foi possivel realizar o login:" + error)
-        );
+        .catch(error => {
+          app.isLoading = false;
+          console.error("não foi possivel realizar o login:" + error);
+        });
     }
+  },
+  beforeMount() {
+    this.$parent.hasUser = false;
   }
 };
 </script>

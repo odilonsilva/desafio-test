@@ -12,7 +12,7 @@ export default {
   name: "Index",
   data() {
     return {
-      hasUser: this.isLoged()
+      hasUser: false
     };
   },
   components: {
@@ -21,10 +21,13 @@ export default {
   methods:{
     isLoged: function(){
       var token = localStorage.getItem('token')
-      if(token) return true
+      if(token) this.hasUser = true
 
-      return false
+      this.hasUser = false
     }
+  },
+  beforeMount(){
+    this.isLoged()
   }
 };
 </script>

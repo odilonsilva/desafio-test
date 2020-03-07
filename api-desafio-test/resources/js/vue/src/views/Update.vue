@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="ui segment" v-if="isLoading == false">
-      <h1>{{ appTitle }}</h1>
+      <h1>
+        <router-link to="/" class="small ui icon button" title="Voltar para home"><</router-link>
+        {{ appTitle }}
+      </h1>
       <form class="ui form">
         <div class="field">
           <label>Nome</label>
@@ -37,7 +40,7 @@
           <p>{{errorMessage}}</p>
         </div>
 
-        <button class="ui button" type="submit" @click="save">Salvar</button>
+        <button class="ui blue button" type="submit" @click="save">Salvar</button>
       </form>
     </div>
     <div class="ui center aligned segment" v-if="isLoading">

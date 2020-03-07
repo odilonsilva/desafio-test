@@ -4,7 +4,6 @@ import router from './vue/src/router'
 import Index from './vue/src/index.vue'
 
 window.vue = Vue
-console.log(appBaseUrl)
 
 Vue.component('index', Index)
 const app = new Vue({

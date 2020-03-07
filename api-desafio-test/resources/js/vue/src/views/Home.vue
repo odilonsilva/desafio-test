@@ -1,7 +1,6 @@
 <template>
   <div class="home">
     <h1>{{ appName }}</h1>
-    <h4>{{ appTitle }}</h4>
 
     <router-link to="/create" class="ui blue button" title="Cadastrar novo usuário">Novo</router-link>
 
@@ -19,6 +18,9 @@
     <div class="ui center aligned segment" v-if="isLoading">
       <img src="/loading.gif" width="50" />
       <p>Carregando...</p>
+    </div>
+    <div class="ui center aligned segment" v-if="isLoading == false && userList.length == 0">
+      <h4>Nenhum usuário cadastrado</h4>
     </div>
   </div>
 </template>
@@ -58,11 +60,15 @@ export default {
           console.error("falha ao buscar dado para a lista: " + err);
         });
     },
+    removeUser(id){
+      this.userList = this.userList.filter(element => element.id != id ? element : null)
+    },
     inverterLista: () => {
       this.userList.reverse();
     }
   },
   beforeMount() {
+    this.$parent.hasUser = true
     this.loadList();
     console.log("mounted");
   }

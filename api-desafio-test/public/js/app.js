@@ -1947,13 +1947,18 @@ __webpack_require__.r(__webpack_exports__);
       var app = this;
 
       if (window.confirm("Deseja apagar ".concat(item.name, "?"))) {
+        app.$parent.isLoading = true;
         fetch(appBaseUrl + "/auth/delete/" + item.id).then(function (response) {
           return response.json();
         }).then(function (res) {
+          app.$parent.isLoading = false;
+
           if (res.status === "success") {
+            app.$parent.removeUser(item.id);
             document.querySelector("#row".concat(item.id)).style.cssText = "display:none";
           }
         })["catch"](function (err) {
+          app.$parent.isLoading = false;
           console.error("falha ao apagar item:" + err);
         });
       }
@@ -2038,7 +2043,7 @@ __webpack_require__.r(__webpack_exports__);
   name: "Index",
   data: function data() {
     return {
-      hasUser: this.isLoged()
+      hasUser: false
     };
   },
   components: {
@@ -2047,9 +2052,12 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     isLoged: function isLoged() {
       var token = localStorage.getItem('token');
-      if (token) return true;
-      return false;
+      if (token) this.hasUser = true;
+      this.hasUser = false;
     }
+  },
+  beforeMount: function beforeMount() {
+    this.isLoged();
   }
 });
 
@@ -2064,6 +2072,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //
@@ -2222,6 +2233,8 @@ var _this2 = undefined;
 //
 //
 //
+//
+//
 // @ is an alias to /src
 
 
@@ -2257,11 +2270,17 @@ var _this2 = undefined;
         console.error("falha ao buscar dado para a lista: " + err);
       });
     },
+    removeUser: function removeUser(id) {
+      this.userList = this.userList.filter(function (element) {
+        return element.id != id ? element : null;
+      });
+    },
     inverterLista: function inverterLista() {
       _this2.userList.reverse();
     }
   },
   beforeMount: function beforeMount() {
+    this.$parent.hasUser = true;
     this.loadList();
     console.log("mounted");
   }
@@ -2306,10 +2325,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "login",
   data: function data() {
     return {
+      isLoading: false,
       email: null,
       password: null,
       hasError: false
@@ -2319,6 +2343,7 @@ __webpack_require__.r(__webpack_exports__);
     login: function login() {
       var app = this;
       app.hasError = false;
+      app.isLoading = true;
       fetch(appBaseUrl + "/auth/login", {
         method: "POST",
         headers: {
@@ -2331,6 +2356,8 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         return response.json();
       }).then(function (res) {
+        app.isLoading = false;
+
         if (res.status === "success") {
           window.localStorage.setItem("token", res.token);
           app.$router.push({
@@ -2340,9 +2367,13 @@ __webpack_require__.r(__webpack_exports__);
           app.hasError = true;
         }
       })["catch"](function (error) {
-        return console.error("não foi possivel realizar o login:" + error);
+        app.isLoading = false;
+        console.error("não foi possivel realizar o login:" + error);
       });
     }
+  },
+  beforeMount: function beforeMount() {
+    this.$parent.hasUser = false;
   }
 });
 
@@ -2357,6 +2388,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //
@@ -20944,7 +20978,21 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "ui segment" }, [
-    _c("h1", [_vm._v(_vm._s(_vm.appTitle))]),
+    _c(
+      "h1",
+      [
+        _c(
+          "router-link",
+          {
+            staticClass: "small ui icon button",
+            attrs: { to: "/", title: "Voltar para home" }
+          },
+          [_vm._v("<")]
+        ),
+        _vm._v("\n    " + _vm._s(_vm.appTitle) + "\n  ")
+      ],
+      1
+    ),
     _vm._v(" "),
     _c("form", { staticClass: "ui form" }, [
       _c("div", { staticClass: "field" }, [
@@ -21076,7 +21124,7 @@ var render = function() {
       _c(
         "button",
         {
-          staticClass: "ui button",
+          staticClass: "ui blue button",
           attrs: { type: "submit" },
           on: { click: _vm.save }
         },
@@ -21121,8 +21169,6 @@ var render = function() {
     [
       _c("h1", [_vm._v(_vm._s(_vm.appName))]),
       _vm._v(" "),
-      _c("h4", [_vm._v(_vm._s(_vm.appTitle))]),
-      _vm._v(" "),
       _c(
         "router-link",
         {
@@ -21154,6 +21200,12 @@ var render = function() {
             _c("img", { attrs: { src: "/loading.gif", width: "50" } }),
             _vm._v(" "),
             _c("p", [_vm._v("Carregando...")])
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.isLoading == false && _vm.userList.length == 0
+        ? _c("div", { staticClass: "ui center aligned segment" }, [
+            _c("h4", [_vm._v("Nenhum usuário cadastrado")])
           ])
         : _vm._e()
     ],
@@ -21197,92 +21249,107 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "ui small aligned center aligned grid" }, [
-    _c("div", { staticClass: "column" }, [
-      _vm._m(0),
-      _vm._v(" "),
-      _c("form", { staticClass: "ui form" }, [
-        _c("div", { staticClass: "ui stacked segment" }, [
-          _c("div", { staticClass: "field" }, [
-            _c("div", { staticClass: "ui left icon input" }, [
-              _c("i", { staticClass: "user icon" }),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.email,
-                    expression: "email"
-                  }
-                ],
-                attrs: {
-                  type: "text",
-                  name: "email",
-                  placeholder: "E-mail address"
-                },
-                domProps: { value: _vm.email },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.email = $event.target.value
-                  }
-                }
-              })
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "field" }, [
-            _c("div", { staticClass: "ui left icon input" }, [
-              _c("i", { staticClass: "lock icon" }),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.password,
-                    expression: "password"
-                  }
-                ],
-                attrs: {
-                  type: "password",
-                  name: "password",
-                  placeholder: "Password"
-                },
-                domProps: { value: _vm.password },
-                on: {
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
-                    }
-                    _vm.password = $event.target.value
-                  }
-                }
-              })
-            ])
-          ]),
-          _vm._v(" "),
-          _c(
-            "div",
-            {
-              staticClass: "ui fluid large blue submit button",
-              on: { click: _vm.login }
-            },
-            [_vm._v("Login")]
-          )
-        ]),
+  return _c(
+    "div",
+    {
+      staticClass: "ui aligned center aligned grid",
+      staticStyle: { "margin-top": "100px" }
+    },
+    [
+      _c("div", { staticClass: "ten wide column" }, [
+        _vm._m(0),
         _vm._v(" "),
-        _vm.hasError
-          ? _c("div", { staticClass: "ui negative message" }, [
-              _vm._v("Falha ao logar")
-            ])
-          : _vm._e()
+        _c("form", { staticClass: "ui form" }, [
+          _c("div", { staticClass: "ui stacked segment" }, [
+            _c("div", { staticClass: "field" }, [
+              _c("div", { staticClass: "ui left icon input" }, [
+                _c("i", { staticClass: "user icon" }),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.email,
+                      expression: "email"
+                    }
+                  ],
+                  attrs: {
+                    type: "text",
+                    name: "email",
+                    placeholder: "E-mail address"
+                  },
+                  domProps: { value: _vm.email },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.email = $event.target.value
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "field" }, [
+              _c("div", { staticClass: "ui left icon input" }, [
+                _c("i", { staticClass: "lock icon" }),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.password,
+                      expression: "password"
+                    }
+                  ],
+                  attrs: {
+                    type: "password",
+                    name: "password",
+                    placeholder: "Password"
+                  },
+                  domProps: { value: _vm.password },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.password = $event.target.value
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "ui fluid large blue submit button",
+                on: { click: _vm.login }
+              },
+              [_vm._v("Login")]
+            )
+          ]),
+          _vm._v(" "),
+          _vm.hasError
+            ? _c("div", { staticClass: "ui negative message" }, [
+                _vm._v("Falha ao logar")
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.isLoading
+            ? _c("div", { staticClass: "ui center aligned segment" }, [
+                _c("img", { attrs: { src: "/loading.gif", width: "50" } }),
+                _vm._v(" "),
+                _c("p", [_vm._v("Carregando...")])
+              ])
+            : _vm._e()
+        ])
       ])
-    ])
-  ])
+    ]
+  )
 }
 var staticRenderFns = [
   function() {
@@ -21318,7 +21385,21 @@ var render = function() {
   return _c("div", [
     _vm.isLoading == false
       ? _c("div", { staticClass: "ui segment" }, [
-          _c("h1", [_vm._v(_vm._s(_vm.appTitle))]),
+          _c(
+            "h1",
+            [
+              _c(
+                "router-link",
+                {
+                  staticClass: "small ui icon button",
+                  attrs: { to: "/", title: "Voltar para home" }
+                },
+                [_vm._v("<")]
+              ),
+              _vm._v("\n      " + _vm._s(_vm.appTitle) + "\n    ")
+            ],
+            1
+          ),
           _vm._v(" "),
           _c("form", { staticClass: "ui form" }, [
             _c("div", { staticClass: "field" }, [
@@ -21454,7 +21535,7 @@ var render = function() {
             _c(
               "button",
               {
-                staticClass: "ui button",
+                staticClass: "ui blue button",
                 attrs: { type: "submit" },
                 on: { click: _vm.save }
               },
@@ -36595,7 +36676,6 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 window.vue = vue__WEBPACK_IMPORTED_MODULE_0___default.a;
-console.log(appBaseUrl);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('index', _vue_src_index_vue__WEBPACK_IMPORTED_MODULE_2__["default"]);
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   router: _vue_src_router__WEBPACK_IMPORTED_MODULE_1__["default"],

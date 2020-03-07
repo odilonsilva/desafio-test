@@ -1,6 +1,9 @@
 <template>
   <div class="ui segment">
-    <h1>{{ appTitle }}</h1>
+    <h1>
+      <router-link to="/" class="small ui icon button" title="Voltar para home"><</router-link>
+      {{ appTitle }}
+    </h1>
     <form class="ui form">
       <div class="field">
         <label>Nome</label>
@@ -36,7 +39,7 @@
         <p>{{errorMessage}}</p>
       </div>
 
-      <button class="ui button" type="submit" @click="save">Salvar</button>
+      <button class="ui blue button" type="submit" @click="save">Salvar</button>
     </form>
     <div class="ui center aligned segment" v-if="isLoading">
       <img src="/loading.gif" width="50" />
@@ -73,7 +76,7 @@ export default {
         this.errorMessageTitle = "Erro no preenchimento";
         return false;
       }
-      app.isLoading = true
+      app.isLoading = true;
       fetch(appBaseUrl + "/auth/register", {
         method: "POST",
         headers: {
@@ -87,7 +90,7 @@ export default {
       })
         .then(response => response.json())
         .then(res => {
-          app.isLoading = false
+          app.isLoading = false;
           if (res.status == "error") {
             app.hasError = true;
             app.errorMessageTitle = "Ocorreu um erro";
@@ -105,7 +108,7 @@ export default {
           app.hasSuccess = true;
         })
         .catch(error => {
-          app.isLoading = false
+          app.isLoading = false;
           app.errorMessageTitle = "Ocorreu um erro";
           app.errorMessage = error;
         });
